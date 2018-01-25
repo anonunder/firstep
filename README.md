@@ -1,2 +1,4 @@
 # firstep
-Just my example of session class for login
+Simple way to use login and register system.
+
+Using Sessions and Active Record pattern.
