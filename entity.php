@@ -86,9 +86,9 @@ abstract class entity{
 		}
 		$stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
 		if($stmt->execute()){
-			echo "da";
+			return true;
 		}else{
-			echo "ne";
+			return false;
 		}
 	}
 }
