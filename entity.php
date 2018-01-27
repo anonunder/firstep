@@ -2,16 +2,16 @@
 
 abstract class entity{
 
-	public static function find_all_users(){
+	public static function find_all(){
 		$users = static::find_query("SELECT * FROM ".static::$table."");
-		$users->setFetchMode(PDO::FETCH_CLASS, static::$class_name);
+		$users->setFetchMode(PDO::FETCH_CLASS, static::class);
 		$found_user = $users->fetchAll();
 		return $found_user;
 	}
 
-	public static function find_user_by_id($user_id){
+	public static function find_by_id($user_id){
 		$result_set = static::find_query("SELECT * FROM ".static::$table." where id = {$user_id} LIMIT 1");
-		$found_user = $result_set->fetchObject(static::$class_name);
+		$found_user = $result_set->fetchObject(static::class);
 		return $found_user;
 	}
 
@@ -34,11 +34,11 @@ abstract class entity{
 		$properties = $this->properties();
 		$table_key = implode(",",array_keys($properties));
 		$table_value = implode(",:",array_keys($properties));
-		$sql = "INSERT INTO ".static::$table."(" . $table_key . ") ";
+		$sql = "INSERT INTO ".static::$table." (" . $table_key . ") ";
 		$sql.= "VALUES (:" . $table_value . ")";
 		$stmt = $db->prepare($sql);
 		foreach($properties as $key=>$value){
-			$stmt->bindParam($key,$value);
+			$stmt->bindParam(":".$key,$this->$key);
 		}
 		if($stmt->execute()){
 			print_r($stmt);
@@ -70,24 +70,23 @@ abstract class entity{
 		$properties = $this->properties();
 		$table_key = implode(",",array_keys($properties));
 		$table_value = implode(",:",array_keys($properties));
-
 		$properties_pairs = array();
-
 		foreach($properties as $key => $value){
 			$properties_pairs[] = "{$key}=:$key";
 		}
-		
 		$sql = "UPDATE " .static::$table." SET ";
 		$sql .= implode(", ",$properties_pairs);
 		$sql .= " where id = :id";
 		$stmt = $db->prepare($sql);
 		foreach($properties as $key=>$value){
-			$asd = $stmt->bindParam($key,$value);
+			$stmt->bindParam(":".$key,$this->$key);
 		}
 		$stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
 		if($stmt->execute()){
+			print_r($stmt);
 			return true;
 		}else{
+			print_r($stmt);
 			return false;
 		}
 	}
