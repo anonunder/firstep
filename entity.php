@@ -71,14 +71,16 @@ abstract class entity{
 		$table_key = implode(",",array_keys($properties));
 		$table_value = implode(",:",array_keys($properties));
 		$properties_pairs = array();
-		foreach($properties as $key => $value){
+		$new = array_filter($properties);
+		foreach($new as $key => $value){
 			$properties_pairs[] = "{$key}=:$key";
 		}
+
 		$sql = "UPDATE " .static::$table." SET ";
 		$sql .= implode(", ",$properties_pairs);
 		$sql .= " where id = :id";
 		$stmt = $db->prepare($sql);
-		foreach($properties as $key=>$value){
+		foreach($new as $key=>$value){
 			$stmt->bindParam(":".$key,$this->$key);
 		}
 		$stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
