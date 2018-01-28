@@ -7,7 +7,7 @@ class images extends entity{
 
 	public $id;
 	public $title;
-	public $description = "";
+	public $description;
 	public $filename;
 	public $type;
 	public $size;
