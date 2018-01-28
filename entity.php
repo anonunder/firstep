@@ -10,7 +10,7 @@ abstract class entity{
 	}
 
 	public static function find_by_id($user_id){
-		$result_set = static::find_query("SELECT * FROM ".static::$table." where id = {$user_id} LIMIT 1");
+		$result_set = static::find_query("SELECT * FROM ".static::$table." where ".static::$key." = {$user_id} LIMIT 1");
 		$found_user = $result_set->fetchObject(static::class);
 		return $found_user;
 	}
@@ -41,11 +41,9 @@ abstract class entity{
 			$stmt->bindParam(":".$key,$this->$key);
 		}
 		if($stmt->execute()){
-			print_r($stmt);
 			$this->id = db::the_insert_id();
 			return true;
 		}else{
-			print_r($stmt);
 			return false;
 		}
 		return $stmt;
@@ -54,7 +52,7 @@ abstract class entity{
 	public function delete(){
 		$db = db::getConnection()->conn;
 		$sql = "DELETE FROM ".self::$table." WHERE ";
-		$sql .= "id = :id ";
+		$sql .= "".static::$key." = :id ";
 		$sql .= "LIMIT 1";
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
@@ -78,17 +76,15 @@ abstract class entity{
 
 		$sql = "UPDATE " .static::$table." SET ";
 		$sql .= implode(", ",$properties_pairs);
-		$sql .= " where id = :id";
+		$sql .= " where ".static::$key." = :id";
 		$stmt = $db->prepare($sql);
 		foreach($new as $key=>$value){
 			$stmt->bindParam(":".$key,$this->$key);
 		}
 		$stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
 		if($stmt->execute()){
-			print_r($stmt);
 			return true;
 		}else{
-			print_r($stmt);
 			return false;
 		}
 	}
