@@ -3,7 +3,7 @@
 class user extends entity{
 	protected static $table_fields = array('username','password');
 	protected static $table = "users";
-	protected static $class_name = __CLASS__;
+	protected static $key = "id";
 	public $id;
 	public $username;
 	public $password;
@@ -19,7 +19,7 @@ class user extends entity{
 		return $user;
 
 	}
-
+	
 	
 
 }
