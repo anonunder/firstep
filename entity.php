@@ -20,14 +20,15 @@ abstract class entity{
 		return $result_set;
 	}
 
-	protected function properties(){
+	public function properties(){
 		$properties = array();
 		foreach (static::$table_fields as $db_field){
 			if(property_exists($this, $db_field)){
 				$properties[$db_field] = $this->$db_field;
 			}
 		}
-		return $properties;
+		$new = array_filter($properties);
+		return $new;
 	}
 	public function create(){
 		$db = db::getConnection()->conn;
@@ -69,7 +70,6 @@ abstract class entity{
 		$table_key = implode(",",array_keys($properties));
 		$table_value = implode(",:",array_keys($properties));
 		$properties_pairs = array();
-		$new = array_filter($properties);
 		foreach($new as $key => $value){
 			$properties_pairs[] = "{$key}=:$key";
 		}
